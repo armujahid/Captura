@@ -34,6 +34,10 @@ namespace Captura.ViewModels
                 ServiceProvider.LaunchFile(new ProcessStartInfo(FilePath) { Verb = "Print" });
             }, CanPrint);
 
+            EncodeCommand = new DelegateCommand(() =>
+            {
+            }, CanEncode);
+
             DeleteCommand = new DelegateCommand(() =>
             {
                 if (!ServiceProvider.Messenger.ShowYesNo($"Are you sure you want to Delete: {FileName}?", "Confirm Deletion"))
@@ -54,6 +58,8 @@ namespace Captura.ViewModels
         }
 
         bool CanPrint => !IsSaving && ItemType == RecentItemType.Image;
+
+        bool CanEncode => !IsSaving && ItemType == RecentItemType.Folder;
 
         public string FilePath { get; }
 
@@ -81,20 +87,23 @@ namespace Captura.ViewModels
 
             IsSaving = false;
 
-            (RemoveCommand as DelegateCommand).RaiseCanExecuteChanged(true);
-            (OpenCommand as DelegateCommand).RaiseCanExecuteChanged(true);
-            (DeleteCommand as DelegateCommand).RaiseCanExecuteChanged(true);
+            RemoveCommand.RaiseCanExecuteChanged(true);
+            OpenCommand.RaiseCanExecuteChanged(true);
+            DeleteCommand.RaiseCanExecuteChanged(true);
 
-            (PrintCommand as DelegateCommand).RaiseCanExecuteChanged(CanPrint);
+            PrintCommand.RaiseCanExecuteChanged(CanPrint);
+            EncodeCommand.RaiseCanExecuteChanged(CanEncode);
         }
 
-        public ICommand RemoveCommand { get; }
+        public DelegateCommand RemoveCommand { get; }
 
-        public ICommand OpenCommand { get; }
+        public DelegateCommand OpenCommand { get; }
 
-        public ICommand PrintCommand { get; }
+        public DelegateCommand PrintCommand { get; }
 
-        public ICommand DeleteCommand { get; }
+        public DelegateCommand EncodeCommand { get; }
+
+        public DelegateCommand DeleteCommand { get; }
 
         public event Action OnRemove;
     }
