@@ -17,6 +17,11 @@ namespace Captura.ViewModels
             this.IsSaving = IsSaving;
             this.ItemType = ItemType;
 
+            if (ItemType == RecentItemType.Video && !Path.HasExtension(FilePath))
+            {
+                this.ItemType = RecentItemType.Folder;
+            }
+
             RemoveCommand = new DelegateCommand(() => OnRemove?.Invoke(), !IsSaving);
 
             OpenCommand = new DelegateCommand(() =>
